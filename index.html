@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mariarosaria & Quentin — 27 Settembre 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f5f0e8;
+    --parchment: #ede4cf;
+    --gold: #c9a84c;
+    --gold-dark: #8b6914;
+    --wax: #8b1a1a;
+    --ink: #2a1f14;
+    --sage: #7a8c6e;
+  }
+
+  body {
+    background: #1a1008;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ══════════════════════════════════
+     ENVELOPE SCENE
+  ══════════════════════════════════ */
+  #scene {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, #2d1e0a 0%, #0d0905 100%);
+    z-index: 100;
+    transition: opacity 0.8s ease 0.3s;
+  }
+  #scene.fade-out { opacity: 0; pointer-events: none; }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  #hint {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: rgba(201,168,76,0.6);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: pulse 2s ease-in-out infinite;
+    transition: opacity 0.4s;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* ══════════════════════════════════
+     THE ENVELOPE — responsive
+  ══════════════════════════════════ */
+  #envelope-wrap {
+    position: relative;
+    width: min(420px, 90vw);
+    height: min(300px, 64vw);
+    cursor: pointer;
+    perspective: 1200px;
+    filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8));
+    /* gentle float animation */
+    animation: floatEnv 4s ease-in-out infinite;
+  }
+  @keyframes floatEnv {
+    0%,100% { transform: translateY(0px); }
+    50%     { transform: translateY(-10px); }
+  }
+
+  #envelope-body {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80%;
+    background: linear-gradient(160deg, #ede4cf 0%, #e0d4b6 60%, #d4c59e 100%);
+    border-radius: 4px 4px 8px 8px;
+    overflow: hidden;
+  }
+  #envelope-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, transparent 49.5%, rgba(0,0,0,0.08) 49.5%, rgba(0,0,0,0.08) 50.5%, transparent 50.5%),
+      linear-gradient(225deg, transparent 49.5%, rgba(0,0,0,0.08) 49.5%, rgba(0,0,0,0.08) 50.5%, transparent 50.5%);
+  }
+  #envelope-body::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 55%;
+    background: linear-gradient(to top, #d4c59e, #e0d4b6);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  }
+
+  .side-flap { position: absolute; bottom: 0; width: 0; height: 0; border-style: solid; }
+  .side-flap.left {
+    left: 0;
+    border-width: 0 0 80% 50%;
+    border-color: transparent transparent #d6c8a7 transparent;
+  }
+  .side-flap.right {
+    right: 0;
+    border-width: 0 50% 80% 0;
+    border-color: transparent #d6c8a7 transparent transparent;
+  }
+
+  #top-flap {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 60%;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+  }
+  #top-flap .flap-front {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #ede4cf 0%, #e0d4b6 100%);
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    backface-visibility: hidden;
+  }
+  #top-flap .flap-back {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #d4c59e 0%, #c8b68e 100%);
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    backface-visibility: hidden;
+    transform: rotateX(180deg);
+  }
+  #top-flap.open { transform: rotateX(-180deg); }
+
+  /* WAX SEAL */
+  #wax-seal {
+    position: absolute;
+    top: 43%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: min(64px, 13vw);
+    height: min(64px, 13vw);
+    z-index: 20;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    cursor: pointer;
+  }
+  #wax-seal.break {
+    transform: translateX(-50%) translateY(-50%) scale(1.4);
+    opacity: 0;
+  }
+  #wax-seal svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+
+  /* LETTER */
+  #letter {
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%) translateY(0px);
+    width: 88%;
+    height: 75%;
+    background: linear-gradient(180deg, #fdfaf3 0%, #f8f2e0 100%);
+    border-radius: 2px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1s cubic-bezier(0.2, 0, 0, 1) 0.6s;
+    z-index: 5;
+    padding: 16px;
+    text-align: center;
+  }
+  #letter.slide-out { transform: translateX(-50%) translateY(-300px); }
+  #letter::before {
+    content: '';
+    position: absolute; inset: 8px;
+    border: 1px solid rgba(201,168,76,0.3);
+    pointer-events: none;
+  }
+  .letter-ornament { color: var(--gold); font-size: clamp(12px,3vw,20px); margin-bottom: 6px; opacity: 0.7; }
+  .letter-names { font-family: 'Cormorant Garamond', serif; font-size: clamp(14px,4vw,24px); font-style: italic; color: var(--ink); }
+  .letter-amp { color: var(--gold-dark); margin: 0 5px; }
+  .letter-date { font-family: 'Tenor Sans', sans-serif; font-size: clamp(8px,2vw,11px); letter-spacing: 2px; color: var(--sage); text-transform: uppercase; margin-top: 8px; }
+  .letter-divider { width: 50px; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 8px 0; }
+  .letter-invite { font-size: clamp(10px,2.5vw,12px); color: rgba(42,31,20,0.6); font-style: italic; }
+
+  /* ══════════════════════════════════
+     MAIN SITE
+  ══════════════════════════════════ */
+  #site {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    overflow-y: auto;
+    height: 100vh;
+    background: var(--cream);
+    color: var(--ink);
+  }
+  #site.visible { opacity: 1; pointer-events: all; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(122,140,110,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      var(--cream);
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px);
+  }
+
+  .hero-ornament { font-size: 13px; letter-spacing: 6px; color: var(--gold); text-transform: uppercase; font-family: 'Tenor Sans', sans-serif; margin-bottom: 24px; animation: fadeUp 1s ease 0.2s both; }
+  .hero-names { font-size: clamp(40px, 9vw, 88px); font-style: italic; font-weight: 300; line-height: 1; animation: fadeUp 1s ease 0.4s both; }
+  .hero-amp { display: block; color: var(--gold-dark); font-size: 0.45em; margin: 8px 0; }
+  .hero-divider { width: 120px; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dark), transparent); margin: 28px auto; animation: fadeUp 1s ease 0.6s both; }
+  .hero-date { font-family: 'Tenor Sans', sans-serif; font-size: 13px; letter-spacing: 5px; text-transform: uppercase; color: var(--sage); animation: fadeUp 1s ease 0.8s both; }
+  .hero-location { margin-top: 10px; font-style: italic; color: rgba(42,31,20,0.5); font-size: 17px; animation: fadeUp 1s ease 1s both; }
+  .scroll-hint { position: absolute; bottom: 36px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(201,168,76,0.5); font-family: 'Tenor Sans', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; animation: fadeUp 1s ease 1.4s both; }
+  .scroll-hint::after { content: ''; display: block; width: 1px; height: 36px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollLine 2s ease-in-out infinite; }
+  @keyframes scrollLine { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(0.5)} }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Info section */
+  .info-section {
+    padding: 80px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  @media(max-width: 600px) {
+    .info-section { grid-template-columns: 1fr; gap: 24px; padding: 60px 20px; }
+  }
+
+  .info-block { text-align: center; padding: 40px 24px; border: 1px solid rgba(201,168,76,0.2); background: rgba(255,255,255,0.5); position: relative; }
+  .info-block::before, .info-block::after { content: '✦'; position: absolute; top: -10px; color: var(--gold); font-size: 14px; background: var(--cream); padding: 0 8px; }
+  .info-block::before { left: 20px; }
+  .info-block::after  { right: 20px; }
+  .info-label { font-family: 'Tenor Sans', sans-serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 16px; }
+  .info-title { font-size: 26px; font-style: italic; font-weight: 300; margin-bottom: 12px; }
+  .info-text { font-size: 15px; color: rgba(42,31,20,0.6); line-height: 1.9; }
+
+  /* RSVP */
+  .rsvp-section { background: var(--ink); padding: 80px 24px; text-align: center; color: var(--cream); }
+  .rsvp-section h2 { font-size: clamp(32px,6vw,48px); font-style: italic; font-weight: 300; margin-bottom: 10px; }
+  .rsvp-subtitle { font-family: 'Tenor Sans', sans-serif; font-size: 11px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 40px; }
+  .rsvp-form { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  .rsvp-form input, .rsvp-form select { background: transparent; border: 1px solid rgba(201,168,76,0.3); color: var(--cream); padding: 15px 18px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; outline: none; transition: border-color 0.3s; width: 100%; -webkit-appearance: none; border-radius: 0; }
+  .rsvp-form input:focus, .rsvp-form select:focus { border-color: var(--gold); }
+  .rsvp-form input::placeholder { color: rgba(245,240,232,0.3); }
+  .rsvp-form select option { background: var(--ink); }
+  .rsvp-btn { background: var(--gold); color: var(--ink); border: none; padding: 18px 48px; font-family: 'Tenor Sans', sans-serif; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: background 0.3s, transform 0.2s; margin-top: 6px; width: 100%; }
+  .rsvp-btn:hover { background: #e0bf6a; transform: translateY(-2px); }
+
+  /* Footer */
+  .footer { text-align: center; padding: 40px 20px; font-style: italic; color: rgba(42,31,20,0.4); font-size: 14px; background: var(--parchment); line-height: 2; }
+</style>
+</head>
+<body>
+
+<!-- ENVELOPE SCENE -->
+<div id="scene">
+  <div id="hint">Tocca per aprire</div>
+
+  <div id="envelope-wrap" onclick="openEnvelope()">
+
+    <div id="letter">
+      <div class="letter-ornament">✦ ✦ ✦</div>
+      <div class="letter-names">Mariarosaria <span class="letter-amp">&amp;</span> Quentin</div>
+      <div class="letter-divider"></div>
+      <div class="letter-date">27 Settembre 2026 · Grand Hotel Cocumella</div>
+      <div class="letter-divider"></div>
+      <div class="letter-invite">Siete cordialmente invitati</div>
+    </div>
+
+    <div id="envelope-body">
+      <div class="side-flap left"></div>
+      <div class="side-flap right"></div>
+    </div>
+
+    <div id="top-flap">
+      <div class="flap-front"></div>
+      <div class="flap-back"></div>
+    </div>
+
+    <!-- WAX SEAL — initiales M & Q corrigées -->
+    <div id="wax-seal">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 4 C38 2, 46 6, 52 12 C58 18, 62 26, 60 34 C58 42, 52 50, 44 56 C36 62, 24 62, 16 56 C8 50, 2 42, 4 34 C6 26, 10 18, 16 12 C22 6, 26 6, 32 4Z" fill="#8b1a1a"/>
+        <path d="M32 4 C38 2, 46 6, 52 12 C54 14, 55 17, 54 20 C48 10, 40 5, 32 4Z" fill="rgba(255,255,255,0.12)"/>
+        <circle cx="32" cy="32" r="20" fill="none" stroke="#6d1010" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="32" cy="32" r="16" fill="none" stroke="#6d1010" stroke-width="0.8" opacity="0.4"/>
+        <!-- M & Q — initiales Mariarosaria & Quentin -->
+        <text x="32" y="29" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="rgba(255,220,180,0.95)">M</text>
+        <text x="32" y="38" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="rgba(255,220,180,0.5)">✦</text>
+        <text x="32" y="48" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="rgba(255,220,180,0.95)">Q</text>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<!-- MAIN SITE -->
+<div id="site">
+
+  <section class="hero">
+    <div class="hero-ornament">Matrimonio</div>
+    <h1 class="hero-names">
+      Mariarosaria
+      <span class="hero-amp">&amp;</span>
+      Quentin
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-date">27 Settembre 2026</p>
+    <p class="hero-location">Grand Hotel Cocumella, Sorrento</p>
+    <div class="scroll-hint">Scoprire</div>
+  </section>
+
+  <section class="info-section">
+    <div class="info-block">
+      <div class="info-label">Cerimonia</div>
+      <div class="info-title">La celebrazione</div>
+      <p class="info-text">
+        Cerimonia religiosa<br>
+        ore 14:00<br><br>
+        Basilica Pontificia di Santa Croce<br>
+        Piazza S. Croce, 1<br>
+        80059 Torre del Greco (NA)
+      </p>
+    </div>
+    <div class="info-block">
+      <div class="info-label">Ricevimento</div>
+      <div class="info-title">La serata</div>
+      <p class="info-text">
+        Aperitivo di benvenuto dalle 16<br>
+        Cena alle 20<br>
+        Serata danzante fino all'alba<br><br>
+        Abbigliamento: elegante
+      </p>
+    </div>
+  </section>
+
+  <section class="rsvp-section">
+    <h2>Confermare la vostra presenza</h2>
+    <p class="rsvp-subtitle">Entro il 1° aprile 2026</p>
+    <div class="rsvp-form">
+      <input type="text" placeholder="Nome e cognome">
+      <input type="email" placeholder="La vostra email" inputmode="email">
+      <select>
+        <option value="" disabled selected>La vostra presenza</option>
+        <option>Con gioia!</option>
+        <option>Purtroppo assente</option>
+      </select>
+      <select>
+        <option value="" disabled selected>Numero di persone</option>
+        <option>1 persona</option>
+        <option>2 persone</option>
+        <option>3 persone</option>
+      </select>
+      <button class="rsvp-btn" onclick="alert('Grazie! Risposta registrata ✦')">Invia la mia risposta</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Mariarosaria &amp; Quentin<br>
+    27 Settembre 2026 · Grand Hotel Cocumella, Sorrento
+  </footer>
+
+</div>
+
+<script>
+  // Particles
+  const scene = document.getElementById('scene');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*8}s;`;
+    scene.appendChild(p);
+  }
+
+  let opened = false;
+
+  function openEnvelope() {
+    if (opened) return;
+    opened = true;
+
+    document.getElementById('hint').style.opacity = '0';
+    document.getElementById('envelope-wrap').style.animation = 'none'; // stop float
+
+    // 1. Seal breaks
+    document.getElementById('wax-seal').classList.add('break');
+
+    // 2. Flap opens
+    setTimeout(() => {
+      document.getElementById('top-flap').classList.add('open');
+    }, 400);
+
+    // 3. Letter slides out
+    setTimeout(() => {
+      document.getElementById('letter').classList.add('slide-out');
+    }, 900);
+
+    // 4. Transition to site
+    setTimeout(() => {
+      document.getElementById('scene').classList.add('fade-out');
+      document.getElementById('site').classList.add('visible');
+      document.body.style.overflow = 'auto';
+    }, 2200);
+
+    setTimeout(() => {
+      document.getElementById('scene').style.display = 'none';
+    }, 3200);
+  }
+</script>
+
+</body>
+</html>
